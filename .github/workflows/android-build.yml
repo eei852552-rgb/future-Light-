@@ -1,9 +1,10 @@
-name: Build Android debug APK
+name: Build Android APK
 
 on:
 workflow_dispatch:
 push:
-branches: [main]
+branches:
+- main
 
 jobs:
 build:
@@ -13,10 +14,17 @@ steps:
   - name: Checkout repository
     uses: actions/checkout@v4
 
+  - name: Check project files
+    run: |
+      echo "Checking project files..."
+      ls -la
+      test -f package.json || (echo "ERROR: package.json not found in repository root" && exit 1)
+
   - name: Set up Node.js
     uses: actions/setup-node@v4
     with:
       node-version: 22
+      cache: npm
 
   - name: Set up Java
     uses: actions/setup-java@v4
@@ -24,16 +32,31 @@ steps:
       distribution: temurin
       java-version: 21
 
-  - name: Install Android SDK
+  - name: Set up Android SDK
     uses: android-actions/setup-android@v3
 
   - name: Install dependencies
-    run: npm ci
+    run: npm install
 
   - name: Build web app
     run: npm run build
 
-  - name: Sync Android
+  - name: Check Capacitor configuration
+    run: |
+      if [ ! -f capacitor.config.json ] && [ ! -f capacitor.config.ts ] && [ ! -f capacitor.config.js ]; then
+        echo "ERROR: Capacitor configuration not found."
+        exit 1
+      fi
+      echo "Capacitor configuration found."
+
+  - name: Generate Android project if missing
+    run: |
+      if [ ! -d android ]; then
+        echo "Android project missing. Generating it..."
+        npx cap add android
+      fi
+
+  - name: Sync Android project
     run: npx cap sync android
 
   - name: Build debug APK
@@ -47,3 +70,4 @@ steps:
     with:
       name: future-light-debug-apk
       path: android/app/build/outputs/apk/debug/app-debug.apk
+      if-no-files-found: error
