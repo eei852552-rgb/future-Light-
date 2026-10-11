@@ -8,4 +8,4 @@
 - Debug APK in current sandbox: **not generated**
 - Build attempt 1 blocker: JDK compiler was missing; OpenJDK 21 JDK was installed.
 - Build attempt 2 blocker: Android SDK location/platform is missing (`ANDROID_HOME`/`sdk.dir`).
-- Prepared fallback: `ANDROID_BUILD.md` and `.github/workflows/android-debug.yml` for a free GitHub Actions build.
+- Prepared fallback: `ANDROID_BUILD.md` and `.github/workflows/android-build.yml` for a free GitHub Actions build.

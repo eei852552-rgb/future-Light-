@@ -25,9 +25,7 @@ Preview ခလုတ်သည် `index.html` ကို CSS/JS နှင့်�
 4. Preview ကိုဖွင့်၍ ပြင်ဆင်ချက်ကို စစ်ပါ။ Backup ခလုတ်မှ JSON project backup ကို ဖုန်းထဲ download လုပ်ထားပါ။
 5. ဖုန်းပြောင်းမည်ဆိုပါက Backup JSON ကို Import ဖြင့် ပြန်ထည့်ပါ။ Browser site data ကို မဖျက်မီ backup လုပ်ပါ။
 
-> ဒီ release တွင် Android APK/AAB မပါသေးပါ။ Android SDK/Gradle နှင့် native build environment မရှိသည့် sandbox တွင် အတည်ပြုနိုင်သည့်အရာမှာ functional web prototype/PWA ဖြစ်သည်။
-
-Android wrapper build အတွက် [ANDROID_BUILD.md](ANDROID_BUILD.md) ကိုဖတ်ပါ။ Capacitor web assets များကို `npm run android:prepare` ဖြင့် `www/` ထဲ generate လုပ်ပြီး `npm run android:sync` ဖြင့် Android assets ထဲ sync လုပ်သည်။
+Android wrapper build အတွက် [ANDROID_BUILD.md](ANDROID_BUILD.md) ကိုဖတ်ပါ။ Capacitor web assets များကို `npm run android:prepare` ဖြင့် `www/` ထဲ generate လုပ်ပြီး `npm run android:sync` ဖြင့် Android project ရှိလျှင် sync၊ မရှိလျှင် generate ပြီး sync လုပ်သည်။ GitHub Actions workflow သည် Android SDK runner ပေါ်တွင် debug APK ကို build ပြီး `future-light-debug-apk` artifact အဖြစ် upload လုပ်သည်။
 
 ## Project ကို restore လုပ်နည်း
 

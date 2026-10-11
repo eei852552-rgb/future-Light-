@@ -1,73 +1,82 @@
-name: Build Android APK
+name: Build Future Light Android debug APK
 
 on:
-workflow_dispatch:
-push:
-branches:
-- main
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.html'
+      - '**.css'
+      - '**.js'
+      - 'js/**'
+      - 'public/**'
+      - 'scripts/**'
+      - 'capacitor.config.json'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'android/**'
+      - '.github/workflows/android-build.yml'
+
+permissions:
+  contents: read
 
 jobs:
-build:
-runs-on: ubuntu-latest
+  build-debug-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-steps:
-  - name: Checkout repository
-    uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
 
-  - name: Check project files
-    run: |
-      echo "Checking project files..."
-      ls -la
-      test -f package.json || (echo "ERROR: package.json not found in repository root" && exit 1)
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
 
-  - name: Set up Node.js
-    uses: actions/setup-node@v4
-    with:
-      node-version: 22
-      cache: npm
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
 
-  - name: Set up Java
-    uses: actions/setup-java@v4
-    with:
-      distribution: temurin
-      java-version: 21
+      - name: Install exact locked dependencies
+        run: npm ci
 
-  - name: Set up Android SDK
-    uses: android-actions/setup-android@v3
+      - name: Check existing web app source
+        run: npm run check
 
-  - name: Install dependencies
-    run: npm install
+      - name: Generate Android project only when missing, then sync Capacitor
+        run: |
+          npm run android:prepare
+          if [ ! -d android ]; then
+            npx cap add android
+          fi
+          npx cap sync android
 
-  - name: Build web app
-    run: npm run build
+      - name: Verify Android configuration
+        run: |
+          test -x android/gradlew
+          grep -q 'applicationId "com.futurelight.editor"' android/app/build.gradle
+          test -f android/app/src/main/assets/public/index.html
 
-  - name: Check Capacitor configuration
-    run: |
-      if [ ! -f capacitor.config.json ] && [ ! -f capacitor.config.ts ] && [ ! -f capacitor.config.js ]; then
-        echo "ERROR: Capacitor configuration not found."
-        exit 1
-      fi
-      echo "Capacitor configuration found."
+      - name: Build debug APK with Gradle
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
 
-  - name: Generate Android project if missing
-    run: |
-      if [ ! -d android ]; then
-        echo "Android project missing. Generating it..."
-        npx cap add android
-      fi
+      - name: Verify generated APK
+        run: |
+          test -s android/app/build/outputs/apk/debug/app-debug.apk
+          file android/app/build/outputs/apk/debug/app-debug.apk
 
-  - name: Sync Android project
-    run: npx cap sync android
-
-  - name: Build debug APK
-    run: |
-      cd android
-      chmod +x gradlew
-      ./gradlew assembleDebug
-
-  - name: Upload APK
-    uses: actions/upload-artifact@v4
-    with:
-      name: future-light-debug-apk
-      path: android/app/build/outputs/apk/debug/app-debug.apk
-      if-no-files-found: error
+      - name: Upload generated APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: future-light-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14

@@ -6,9 +6,10 @@
   "type": "module",
   "scripts": {
     "check": "node --check js/storage.js && node --check js/syntax.js && node --check js/app.js",
+    "build": "npm run android:prepare",
     "serve": "python3 -m http.server 3000 --bind 0.0.0.0",
     "android:prepare": "node scripts/prepare-web.mjs",
-    "android:sync": "npm run android:prepare && cap sync android",
+    "android:sync": "npm run android:prepare && bash scripts/ensure-android.sh",
     "android:open": "cap open android",
     "android:build:debug": "cd android && ./gradlew assembleDebug",
     "android:build:release": "cd android && ./gradlew bundleRelease"
