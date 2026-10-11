@@ -1,0 +1,8 @@
+{
+  "appId": "com.futurelight.editor",
+  "appName": "Future Light",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "Future Light — Mobile Code Editor",
+  "short_name": "Future Light",
+  "description": "A calm, recoverable code editor for HTML, CSS, JavaScript, JSON and text.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b1728",
+  "theme_color": "#0b1728",
+  "orientation": "portrait-primary",
+  "icons": [{"src":"/public/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}],
+  "version": "1.0.0"
+}

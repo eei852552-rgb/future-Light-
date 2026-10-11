@@ -1,0 +1,24 @@
+{
+  "name": "future-light",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Future Light mobile-first code editor and PWA",
+  "type": "module",
+  "scripts": {
+    "check": "node --check js/storage.js && node --check js/syntax.js && node --check js/app.js",
+    "serve": "python3 -m http.server 3000 --bind 0.0.0.0",
+    "android:prepare": "node scripts/prepare-web.mjs",
+    "android:sync": "npm run android:prepare && cap sync android",
+    "android:open": "cap open android",
+    "android:build:debug": "cd android && ./gradlew assembleDebug",
+    "android:build:release": "cd android && ./gradlew bundleRelease"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.3",
+    "@capacitor/core": "8.5.3"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "8.5.3"
+  }
+}

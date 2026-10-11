@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="my">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1728" />
+  <meta name="description" content="Future Light — ဖုန်းပေါ်မှ code ရေးရန် မူရင်း mobile-first editor" />
+  <link rel="icon" href="/public/favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="stylesheet" href="/styles.css" />
+  <title>Future Light — Code Editor</title>
+</head>
+<body data-theme="dark">
+  <div class="app-frame">
+    <header class="topbar">
+      <button class="icon-btn mobile-only" id="mobile-menu-btn" aria-label="Explorer ဖွင့်ရန်">☰</button>
+      <a class="brand" href="/" aria-label="Future Light home">
+        <span class="brand-mark" aria-hidden="true"><i></i><b></b><em></em></span>
+        <span><strong>Future</strong> Light<small>mobile code bench</small></span>
+      </a>
+      <div class="topbar-spacer"></div>
+      <span class="sync-pill" id="sync-status"><i></i> Local</span>
+      <button class="icon-btn" id="theme-btn" aria-label="Theme ပြောင်းရန်" title="Theme ပြောင်းရန်">◐</button>
+      <button class="icon-btn" id="search-btn" aria-label="Search ဖွင့်ရန်" title="Search">⌕</button>
+      <button class="icon-btn" id="preview-btn" aria-label="Preview ဖွင့်ရန်" title="Preview">▷</button>
+      <button class="primary-btn save-btn" id="save-btn" title="Ctrl/Cmd + S">Save</button>
+    </header>
+
+    <div class="app-body">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-head">
+          <div><span class="overline">WORKSPACE</span><h1>starter-site</h1></div>
+          <button class="icon-btn" id="new-item-btn" aria-label="ဖိုင် သို့မဟုတ် folder အသစ်">＋</button>
+        </div>
+        <div class="explorer-tools">
+          <button class="quiet-btn" id="open-file-btn">↥ <span>Open file</span></button>
+          <button class="quiet-btn" id="import-project-btn">⇩ <span>Import</span></button>
+          <button class="quiet-btn" id="export-btn">⇧ <span>Backup</span></button>
+        </div>
+        <div class="tree-label"><span>EXPLORER</span><span id="file-count">0 files</span></div>
+        <nav class="file-tree" id="file-tree" aria-label="Project files"></nav>
+        <div class="sidebar-foot">
+          <div class="storage-meter"><span></span></div>
+          <div><strong>Local workspace</strong><small id="storage-label">Ready to edit offline</small></div>
+        </div>
+      </aside>
+
+      <main class="workspace" id="workspace">
+        <div class="mobile-overlay" id="mobile-overlay"></div>
+        <div class="workspace-head">
+          <div class="breadcrumbs"><span>starter-site</span><b>/</b><strong id="current-path">index.html</strong></div>
+          <div class="workspace-actions">
+            <button class="icon-btn" id="undo-btn" title="Undo">↶</button>
+            <button class="icon-btn" id="redo-btn" title="Redo">↷</button>
+            <button class="icon-btn" id="settings-btn" title="Editor settings">⚙</button>
+          </div>
+        </div>
+        <div class="tab-strip" id="tab-strip" role="tablist" aria-label="Open files"></div>
+
+        <section class="editor-card" id="editor-card">
+          <div class="editor-toolbar">
+            <div class="editor-file-meta"><span class="file-chip" id="language-chip">HTML</span><span id="editor-mode">Editing locally</span></div>
+            <div class="editor-tools">
+              <button class="tool-btn" id="select-all-btn">Select all</button>
+              <button class="tool-btn" id="copy-btn">Copy</button>
+              <button class="tool-btn" id="cut-btn">Cut</button>
+              <button class="tool-btn" id="paste-btn">Paste</button>
+            </div>
+          </div>
+          <div class="search-panel" id="search-panel" hidden>
+            <div class="search-line"><span>⌕</span><input id="search-input" type="search" placeholder="Find in current file" /><span class="match-count" id="match-count">0/0</span><button class="mini-btn" id="search-prev">↑</button><button class="mini-btn" id="search-next">↓</button><button class="mini-btn" id="close-search">×</button></div>
+            <div class="search-line replace-line"><span>↪</span><input id="replace-input" type="text" placeholder="Replace with" /><button class="tool-btn" id="replace-btn">Replace</button><button class="tool-btn" id="replace-all-btn">Replace all</button></div>
+          </div>
+          <div class="code-scroller" id="code-scroller">
+            <pre class="gutter" id="gutter" aria-hidden="true">1</pre>
+            <div class="code-layer"><pre class="code-highlight" id="code-highlight" aria-hidden="true"></pre><textarea id="code-editor" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-label="Code editor"></textarea></div>
+          </div>
+          <div class="editor-status"><span id="cursor-status">Ln 1, Col 1</span><span id="indent-status">Spaces: 2</span><span id="wrap-status">Wrap: on</span><span class="status-spacer"></span><span id="save-status">Saved locally</span></div>
+        </section>
+
+        <section class="empty-state" id="empty-state" hidden><div class="empty-orbit">✦</div><h2>Choose a file to start</h2><p>Explorer ထဲမှ ဖိုင်တစ်ခုကို ရွေးပါ။</p></section>
+      </main>
+
+      <section class="preview-panel" id="preview-panel" aria-label="Live preview" hidden>
+        <div class="preview-head"><div><span class="overline">LIVE SURFACE</span><h2>Preview</h2></div><div><button class="icon-btn" id="refresh-preview" title="Refresh preview">↻</button><button class="icon-btn" id="close-preview" title="Close preview">×</button></div></div>
+        <div class="preview-url"><span class="live-dot"></span><span>local://starter-site/index.html</span><span class="preview-ready">Ready</span></div>
+        <iframe id="preview-frame" title="Rendered HTML preview" sandbox="allow-scripts"></iframe>
+        <div class="preview-note">Preview သည် သင့် browser အတွင်း local sandbox ဖြင့် run သည်။</div>
+      </section>
+    </div>
+
+    <nav class="bottom-nav" aria-label="Quick actions"><button id="bottom-files">▦<span>Files</span></button><button id="bottom-editor" class="active">⌘<span>Editor</span></button><button id="bottom-preview">▷<span>Preview</span></button><button id="bottom-settings">⚙<span>Settings</span></button></nav>
+  </div>
+
+  <div class="toast-region" id="toast-region" aria-live="polite"></div>
+  <div class="modal-backdrop" id="modal-backdrop" hidden><section class="modal" id="modal" role="dialog" aria-modal="true"></section></div>
+  <input type="file" id="file-input" hidden multiple accept=".html,.htm,.css,.js,.mjs,.json,.txt,.md" />
+  <input type="file" id="project-input" hidden accept=".json" />
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
